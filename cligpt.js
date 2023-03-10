@@ -12,7 +12,7 @@ const readline = require("readline").createInterface({
 
 const fs = require("fs");
 const path = require('path');
-const currentVersion = "0.9.1";
+const currentVersion = "0.9.2";
 
 const pkg = require('./package.json');
 updateNotifier({ pkg }).notify();
