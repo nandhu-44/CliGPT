@@ -1,0 +1,36 @@
+{
+  "name": "cligpt",
+  "version": "0.9.1",
+  "description": "A command line tool to interact with chatgpt",
+  "main": "cligpt.js",
+  "scripts": {
+    "start": "node .",
+    "test": "nodemon ."
+  },
+  "bin": {
+    "cligpt": "./cligpt.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nandhu-44/cligpt.git"
+  },
+  "keywords": [
+    "chatgpt",
+    "gpt3",
+    "cligpt",
+    "gpt3.5",
+    "openai"
+  ],
+  "author": "n44",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nandhu-44/cligpt/issues"
+  },
+  "homepage": "https://github.com/nandhu-44/cligpt#readme",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^8.0.0",
+    "openai": "^3.1.0",
+    "update-notifier": "^5.1.0"
+  }
+}
