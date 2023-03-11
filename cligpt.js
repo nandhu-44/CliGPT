@@ -81,10 +81,12 @@ if (commander.opts().version) {
       temperature: 0.9,
       max_tokens: 2048,
     };
-    const loading = animate("Generating response");
     try {
-      const completion = await openai.createCompletion(modelOptions);
-      stopAnimate(loading);
+      const loading = animate("Generating response");
+      const completion = await openai.createCompletion(modelOptions).then((response) => {
+        stopAnimate(loading);
+        return response;
+      });
       console.log(chalk.hex(responseColor)(completion.data.choices[0].text));
       console.log()
       process.exit(0);
