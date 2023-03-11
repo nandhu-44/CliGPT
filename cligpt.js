@@ -1,26 +1,24 @@
 #!/usr/bin/env node
 
-const updateNotifier = require('update-notifier');
 const commander = require("commander");
 const chalk = require("chalk");
 const { Configuration, OpenAIApi } = require("openai");
 const { exec } = require("child_process");
-const readline = require("readline").createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+
+const { animate, stopAnimate, getPrompt } = require("./utils/functions.js");
+const { notifier } = require("./utils/updateNotifier.js");
+
+notifier.notify();
 
 const fs = require("fs");
 const path = require('path');
-const currentVersion = "0.9.2";
-
-const pkg = require('./package.json');
-updateNotifier({ pkg }).notify();
+const currentVersion = "0.10.0";
 
 const updateColor = "#008000";
+const responseColor = "#0f0560";
 const errorColor = "#ff0000";
 const versionColor = "#ffff00";
-const successColor = "#008000";
+const successColor = "#90ee90";
 
 commander
   .option("-a, --ask [prompt]", `Ask a question to ChatGPT ${chalk.grey("(requires OpenAI API key)")}`)
@@ -40,22 +38,19 @@ if (commander.opts().version) {
   exec("npm install -g cligpt", (error, stdout, stderr) => {
     apiKey = require("./apiKey.json")?.apikey ?? process?.env?.OPENAI_API_KEY ?? "";
     if (error) {
-      clearInterval(loading);
-      console.log();
+      stopAnimate(loading);
       console.log(`${chalk.hex(errorColor)("Error:")} ${error.message}`);
       return;
     }
     if (stderr) {
-      clearInterval(loading);
-      console.log();
-      console.log(`\rstderr: ${stderr}`);
+      stopAnimate(loading);
+      console.log(`stderr: ${stderr}`);
       return;
     }
     if (stdout) {
       fs.writeFileSync(path.join(__dirname, "apiKey.json"), JSON.stringify({ apikey: apiKey }));
-      clearInterval(loading);
-      console.log();
-      process.stdout.write("\r" + `Successfully updated to the latest version!`);
+      stopAnimate(loading);
+      console.log(chalk.hex(successColor)("CliGPT has been successfully updated to the latest version!"));
       process.exit(0);
     }
     process.exit(0)
@@ -78,22 +73,23 @@ if (commander.opts().version) {
     }
 
     let prompt = commander.opts()?.ask === true ? false : commander.opts()?.ask;
-    if (!prompt) prompt = await getPrompt();
+    if (!prompt) { prompt = await getPrompt(); console.log(); }
 
     const modelOptions = {
       model: "text-davinci-003",
       prompt,
       temperature: 0.9,
       max_tokens: 2048,
-
     };
-
+    const loading = animate("Generating response");
     try {
       const completion = await openai.createCompletion(modelOptions);
-      console.log(chalk.blue(completion.data.choices[0].text));
+      stopAnimate(loading);
+      console.log(chalk.hex(responseColor)(completion.data.choices[0].text));
       console.log()
       process.exit(0);
     } catch (error) {
+      stopAnimate(loading);
       if (error.response) {
         console.log(chalk.hex(errorColor)("Error response from OpenAI:"));
         if (error.response.status === 401) {
@@ -128,27 +124,4 @@ if (commander.opts().version) {
   commander.outputHelp();
   console.log();
   process.exit(0);
-}
-
-async function getPrompt() {
-  return new Promise((resolve, reject) => {
-    readline.question(chalk.hex("#0f0560")("Type your Prompt: "), async (userInput) => {
-      readline.close();
-      resolve(userInput);
-    });
-  });
-}
-
-function animate(text = "") {
-  const frames = [`${text} ${chalk.hex(vibgyor())("⠋")}  `, `${text} ${chalk.hex(vibgyor())("⠙")}  `, `${text} ${chalk.hex(vibgyor())("⠹")}  `, `${text} ${chalk.hex(vibgyor())("⠸")}  `, `${text} ${chalk.hex(vibgyor())("⠼")}  `, `${text} ${chalk.hex(vibgyor())("⠴")}  `, `${text} ${chalk.hex(vibgyor())("⠦")}  `, `${text} ${chalk.hex(vibgyor())("⠧")}  `, `${text} ${chalk.hex(vibgyor())("⠇")}  `, `${text} ${chalk.hex(vibgyor())("⠏")}  `];
-  let i = 0;
-  return setInterval(() => {
-    process.stdout.write("\r" + frames[i]);
-    i = (i + 1) % frames.length;
-  }, 75);
-}
-
-function vibgyor() {
-  const colors = ["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#0000ff", "#4b0082", "#9400d3"];
-  return colors[Math.floor(Math.random() * colors.length)];
 }
