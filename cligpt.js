@@ -12,13 +12,12 @@ notifier.notify();
 
 const fs = require("fs");
 const path = require('path');
-const currentVersion = "0.10.0";
+const currentVersion = "0.11.0";
 
-const updateColor = "#008000";
-const responseColor = "#0f0560";
-const errorColor = "#ff0000";
-const versionColor = "#ffff00";
-const successColor = "#90ee90";
+const updateColor = "#90ee90";
+const responseColor = "#2685de";
+const errorColor = "#d64d2b";
+const versionColor = "#e8dd3f";
 
 commander
   .option("-a, --ask [prompt]", `Ask a question to ChatGPT ${chalk.grey("(requires OpenAI API key)")}`)
@@ -34,23 +33,23 @@ if (commander.opts().version) {
   console.log(`CliGPT v${chalk.hex(versionColor)(require("./package.json")?.version ?? currentVersion)}`);
   process.exit(0);
 } else if (commander.opts().update) {
-  const loading = animate("Updating CliGPT");
-  exec("npm install -g cligpt", (error, stdout, stderr) => {
+  const loading = animate("Updating CliGPT").then((loader) => loader);
+  exec("npm install -g cligpt", async (error, stdout, stderr) => {
     apiKey = require("./apiKey.json")?.apikey ?? process?.env?.OPENAI_API_KEY ?? "";
     if (error) {
-      stopAnimate(loading);
+      await stopAnimate(loading);
       console.log(`${chalk.hex(errorColor)("Error:")} ${error.message}`);
       return;
     }
     if (stderr) {
-      stopAnimate(loading);
+      await stopAnimate(loading);
       console.log(`stderr: ${stderr}`);
       return;
     }
     if (stdout) {
       fs.writeFileSync(path.join(__dirname, "apiKey.json"), JSON.stringify({ apikey: apiKey }));
-      stopAnimate(loading);
-      console.log(chalk.hex(successColor)("CliGPT has been successfully updated to the latest version!"));
+      await stopAnimate(loading);
+      console.log(chalk.hex(updateColor)("CliGPT has been successfully updated to the latest version!"));
       process.exit(0);
     }
     process.exit(0)
@@ -82,16 +81,16 @@ if (commander.opts().version) {
       max_tokens: 2048,
     };
     try {
-      const loading = animate("Generating response");
-      const completion = await openai.createCompletion(modelOptions).then((response) => {
-        stopAnimate(loading);
+      const loading = await animate("Generating response");
+      const completion = await openai.createCompletion(modelOptions).then(async (response) => {
+        await stopAnimate(loading);
         return response;
       });
       console.log(chalk.hex(responseColor)(completion.data.choices[0].text));
       console.log()
       process.exit(0);
     } catch (error) {
-      stopAnimate(loading);
+      await stopAnimate(loading);
       if (error.response) {
         console.log(chalk.hex(errorColor)("Error response from OpenAI:"));
         if (error.response.status === 401) {

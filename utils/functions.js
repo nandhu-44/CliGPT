@@ -6,14 +6,14 @@ const chalk = require("chalk");
 
 async function getPrompt() {
     return new Promise((resolve, reject) => {
-        readline.question(chalk.hex("#0f0560")("Type your Prompt: "), async (userInput) => {
+        readline.question(chalk.hex("#c821ed")("Type your Prompt: "), async (userInput) => {
             readline.close();
             resolve(userInput);
         });
     });
 }
 
-function animate(text = "") {
+async function animate(text = "") {
     const frames = [`${text} ${chalk.hex(vibgyor())("⠋")}  `, `${text} ${chalk.hex(vibgyor())("⠙")}  `, `${text} ${chalk.hex(vibgyor())("⠹")}  `, `${text} ${chalk.hex(vibgyor())("⠸")}  `, `${text} ${chalk.hex(vibgyor())("⠼")}  `, `${text} ${chalk.hex(vibgyor())("⠴")}  `, `${text} ${chalk.hex(vibgyor())("⠦")}  `, `${text} ${chalk.hex(vibgyor())("⠧")}  `, `${text} ${chalk.hex(vibgyor())("⠇")}  `, `${text} ${chalk.hex(vibgyor())("⠏")}  `];
     let i = 0;
     return setInterval(() => {
@@ -22,7 +22,7 @@ function animate(text = "") {
     }, 75);
 }
 
-function stopAnimate(loader) {
+async function stopAnimate(loader) {
     clearInterval(loader);
     process.stdout.write("\r");
 }
