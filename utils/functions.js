@@ -14,7 +14,7 @@ async function getPrompt() {
 }
 
 async function animate(text = "") {
-    const frames = [`${text} ${chalk.hex(vibgyor())("⠋")}  `, `${text} ${chalk.hex(vibgyor())("⠙")}  `, `${text} ${chalk.hex(vibgyor())("⠹")}  `, `${text} ${chalk.hex(vibgyor())("⠸")}  `, `${text} ${chalk.hex(vibgyor())("⠼")}  `, `${text} ${chalk.hex(vibgyor())("⠴")}  `, `${text} ${chalk.hex(vibgyor())("⠦")}  `, `${text} ${chalk.hex(vibgyor())("⠧")}  `, `${text} ${chalk.hex(vibgyor())("⠇")}  `, `${text} ${chalk.hex(vibgyor())("⠏")}  `];
+    const frames = [`${text} ${chalk.hex(await vibgyor())("⠋")}  `, `${text} ${chalk.hex(await vibgyor())("⠙")}  `, `${text} ${chalk.hex(await vibgyor())("⠹")}  `, `${text} ${chalk.hex(await vibgyor())("⠸")}  `, `${text} ${chalk.hex(await vibgyor())("⠼")}  `, `${text} ${chalk.hex(await vibgyor())("⠴")}  `, `${text} ${chalk.hex(await vibgyor())("⠦")}  `, `${text} ${chalk.hex(await vibgyor())("⠧")}  `, `${text} ${chalk.hex(await vibgyor())("⠇")}  `, `${text} ${chalk.hex(await vibgyor())("⠏")}  `];
     let i = 0;
     return setInterval(() => {
         process.stdout.write("\r" + frames[i]);
@@ -25,11 +25,13 @@ async function animate(text = "") {
 async function stopAnimate(loader) {
     clearInterval(loader);
     process.stdout.write("\r");
+    process.stdout.write(" ".repeat(100));
+    process.stdout.write("\r");
 }
 
-function vibgyor() {
-    const colors = ['#FF0000', '#FFA500', '#FFFF00', '#008000', '#0000FF', '#4B0082','#EE82EE']
+async function vibgyor() {
+    const colors = ['#FF0000', '#FFA500', '#FFFF00', '#008000', '#0000FF', '#4B0082', '#EE82EE']
     return colors[Math.floor(Math.random() * colors.length)];
 }
 
-module.exports = { getPrompt, animate , stopAnimate}
+module.exports = { getPrompt, animate, stopAnimate }

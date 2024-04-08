@@ -12,8 +12,9 @@ notifier.notify();
 
 const fs = require("fs");
 const path = require('path');
-const currentVersion = "0.11.0";
+const currentVersion = "0.11.2";
 
+const successColor = "#15d6a0";
 const updateColor = "#90ee90";
 const responseColor = "#2685de";
 const errorColor = "#d64d2b";
@@ -80,8 +81,8 @@ if (commander.opts().version) {
       temperature: 0.9,
       max_tokens: 2048,
     };
+    const loading = await animate("Generating response");
     try {
-      const loading = await animate("Generating response");
       const completion = await openai.createCompletion(modelOptions).then(async (response) => {
         await stopAnimate(loading);
         return response;
@@ -118,7 +119,7 @@ if (commander.opts().version) {
     apikeyFilePath,
     JSON.stringify({ apikey: commander.opts().apikey }, null, 2),
   );
-  console.log("API key set successfully!");
+  console.log(chalk.hex(successColor)("API key set successfully!"));
   process.exit(0);
 } else {
   console.log();
