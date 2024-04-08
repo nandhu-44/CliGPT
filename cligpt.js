@@ -75,7 +75,7 @@ if (commander.opts().version) {
     if (!prompt) { prompt = await getPrompt(); console.log(); }
 
     const modelOptions = {
-      model: "text-davinci-003",
+      model: "gpt-3.5-turbo",
       prompt,
       temperature: 0.9,
       max_tokens: 2048,
