@@ -1,7 +1,7 @@
 {
   "name": "cligpt",
-  "version": "0.11.3",
-  "description": "A command line tool to interact with chatgpt",
+  "version": "0.12.0",
+  "description": "[Deprecated] A command line tool to interact with chatgpt. No longer maintained.",
   "main": "cligpt.js",
   "scripts": {
     "start": "node .",
