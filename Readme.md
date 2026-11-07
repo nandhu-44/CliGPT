@@ -6,6 +6,8 @@
 
 > **Archived.** CliGPT is no longer maintained and does not work with the current OpenAI API.
 > It stays here as a record of one of my first published tools.
+>
+> **v0.12.0 is the final release.** It only updates this README and the package description; the code is unchanged.
 
 CliGPT let you ask OpenAI's models questions from your terminal: one global install, one API key, one command.
 

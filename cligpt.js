@@ -12,7 +12,7 @@ notifier.notify();
 
 const fs = require("fs");
 const path = require('path');
-const currentVersion = "0.11.2";
+const currentVersion = "0.12.0";
 
 const successColor = "#15d6a0";
 const updateColor = "#90ee90";
