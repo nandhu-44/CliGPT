@@ -4,8 +4,7 @@
   "description": "[Deprecated] A command line tool to interact with chatgpt. No longer maintained.",
   "main": "cligpt.js",
   "scripts": {
-    "start": "node .",
-    "test": "nodemon ."
+    "start": "node ."
   },
   "bin": {
     "cligpt": "./cligpt.js"
@@ -21,8 +20,8 @@
     "gpt3.5",
     "openai"
   ],
-  "author": "n44",
-  "license": "ISC",
+  "author": "Nandhu Krishnan A (nandhu-44)",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/nandhu-44/cligpt/issues"
   },

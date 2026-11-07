@@ -4,14 +4,14 @@ const commander = require("commander");
 const chalk = require("chalk");
 const { Configuration, OpenAIApi } = require("openai");
 const { exec } = require("child_process");
+const fs = require("fs");
+const path = require("path");
 
 const { animate, stopAnimate, getPrompt } = require("./utils/functions.js");
 const { notifier } = require("./utils/updateNotifier.js");
 
 notifier.notify();
 
-const fs = require("fs");
-const path = require('path');
 const currentVersion = "0.12.0";
 
 const successColor = "#15d6a0";
@@ -28,7 +28,21 @@ commander
   .option("-h, --help", "Show help menu")
   .parse(process.argv);
 
-let apiKey = require("./apiKey.json")?.apikey ?? process?.env?.OPENAI_API_KEY ?? "";
+const apiKeyFilePath = path.join(__dirname, "apiKey.json");
+
+// The key saved by `cligpt -k` lives next to the installed package. The file is
+// optional, so fall back to the OPENAI_API_KEY environment variable.
+function loadApiKey() {
+  let savedKey = "";
+  try {
+    savedKey = JSON.parse(fs.readFileSync(apiKeyFilePath, "utf8"))?.apikey ?? "";
+  } catch (_) {
+    // No saved key yet.
+  }
+  return savedKey || process.env.OPENAI_API_KEY || "";
+}
+
+let apiKey = loadApiKey();
 
 if (commander.opts().version) {
   console.log(`CliGPT v${chalk.hex(versionColor)(require("./package.json")?.version ?? currentVersion)}`);
@@ -36,7 +50,7 @@ if (commander.opts().version) {
 } else if (commander.opts().update) {
   const loading = animate("Updating CliGPT").then((loader) => loader);
   exec("npm install -g cligpt", async (error, stdout, stderr) => {
-    apiKey = require("./apiKey.json")?.apikey ?? process?.env?.OPENAI_API_KEY ?? "";
+    apiKey = loadApiKey();
     if (error) {
       await stopAnimate(loading);
       console.log(`${chalk.hex(errorColor)("Error:")} ${error.message}`);
@@ -48,7 +62,7 @@ if (commander.opts().version) {
       return;
     }
     if (stdout) {
-      fs.writeFileSync(path.join(__dirname, "apiKey.json"), JSON.stringify({ apikey: apiKey }));
+      fs.writeFileSync(apiKeyFilePath, JSON.stringify({ apikey: apiKey }));
       await stopAnimate(loading);
       console.log(chalk.hex(updateColor)("CliGPT has been successfully updated to the latest version!"));
       process.exit(0);
@@ -114,9 +128,8 @@ if (commander.opts().version) {
     console.log("Please provide an API key.");
     process.exit(0);
   }
-  const apikeyFilePath = path.join(__dirname, 'apiKey.json');
   fs.writeFileSync(
-    apikeyFilePath,
+    apiKeyFilePath,
     JSON.stringify({ apikey: commander.opts().apikey }, null, 2),
   );
   console.log(chalk.hex(successColor)("API key set successfully!"));

@@ -1,4 +1,8 @@
 node_modules
 .vscode
-.apikey
 tests/
+
+# Saved API keys: never commit or publish these
+apiKey.json
+.apikey
+.env

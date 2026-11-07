@@ -1,5 +1,10 @@
 .vscode
 node_modules
 .git
-.apikey
+.github
 tests/
+
+# Saved API keys: never publish these
+apiKey.json
+.apikey
+.env
